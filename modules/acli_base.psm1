@@ -7,7 +7,12 @@ function Write_oh([String]$line){
 }
 
 function common_exit($code){
-    
+    if($code -eq 0){
+        Write_oh("Process successed")
+    }else{
+        Write_oh("Abortion occured")
+        exit $code
+    }
 }
 
 class acli_base{
@@ -19,6 +24,9 @@ class acli_base{
         [String]$type
     ){
         # Check the parameter
-        $resource_type_list = az 
+        [Array]$resource_type_list = (az resource list).type
+        if($resource_type_list.IndexOf($type) -eq -1){
+            Write_oh("")
+        }
     }
 }
