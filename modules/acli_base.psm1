@@ -107,10 +107,29 @@ class acli_base{
         $account = az account show | ConvertFrom-Json
         if($? -eq $False){
             New-Item -ItemType Directory -Force "credential"
-            $pass_file = ".\"
+            $pass_file = ".\credential\say_peace.pw"
+            $id_file = ".\credential\plat.on"
             # login method
-            if(Test-Path )
-            $login_files = 
+            if((Test-Path $pass_file -eq $False) -or (Test-Path $id_file -eq $False)){
+                $AzCred = New-Object System.Management.Automation.PSCredential $(Get-Content $id_file), (Get-Content $pass_file | ConvertTo-SecureString )
+                if($? -eq $False){
+                    $AzCred = ""
+                }
+            }else{
+                $AzCred = ""
+            }
+            if($AzCred -eq ""){
+                Write_oh("the information 'id' and 'password' isn't set still")
+                Write_oh("please input the credential information of the principal service account")
+                $AzCred = Get-Credential
+                $AzCred.UserName | Set-Content $id_file
+                $AzCred.Password | ConvertFrom-SecureString | Set-Content $pass_file
+            }
+            az login --service-principal --username $AzCred.UserName --tenant $env --password $AzCred.GetNetworkCredential().Password
+            if($? -eq $False){
+                Write_oh("Login action has failed.Sorry review the parameter, or remove the credential file and try to login")
+                common_exit 1
+            }
         }
         $this.input_data.Add("env",$env)
     }
