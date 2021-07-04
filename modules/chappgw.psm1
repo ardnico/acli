@@ -10,7 +10,11 @@ class azvm : acli_base{
         if(($appgw.sku.capacity -eq $capacity) -and ($appgw.sku.size -eq $size)){
             Write_oh("This appgw has already changed.")
         }else{
-            
+            az network application-gateway update --resource-group $this.input_data.rg --name $this.input_data.appgw --capacity $capacity --sku  $size
+            if($? -eq $False){
+                Write_oh("Failed to change the size of the application gateway")
+                common_exit 1
+            }
         }
     }
 
