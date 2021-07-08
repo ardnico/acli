@@ -58,6 +58,10 @@ class acli_base{
             Write_oh("The resourcegroup name likes mistaken : $resourcegroupname")
             common_exit 1
         }
+        if($resource_type_list.Length -eq 0){
+            Write_oh("the resource group name looks like wrong name.please review the name.")
+            common_exit 1
+        }
         if($resource_type_list.IndexOf($type) -eq -1){
             Write_oh("There is no such type resource $type")
             common_exit 1
@@ -69,6 +73,9 @@ class acli_base{
         }else{
             # set parameter
             $this.input_data.Add($keyname,$resource)
+            if($this.input_data.rg.Length -eq 0){
+                $this.input_data.Add("rg",$resourcegroupname)
+            }
         }
     }
 
@@ -92,6 +99,16 @@ class acli_base{
             [String]$keyname
             [String]$type
         )
+    }
+    set_rg([String]$resourcegroupname){
+        $keyname = "rg"
+        $type = "Microsoft.Network/applicationGateways"
+        if($this.input_data.rg.Length -eq 0){
+            $this.input_data.Add("rg",$resourcegroupname)
+        }else{
+            Write_oh("Resource group name will be updated: $($this.input_data.rg) to $($resourcegroupname)")
+            $this.input_data.rg = $resourcegroupname
+        }
     }
 
     azlogin($env){
