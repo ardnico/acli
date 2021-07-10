@@ -17,11 +17,11 @@ class azvm : acli_base{
             }
         }
     }
-    GoaroundVM($vm,$action){
+    goaroundVM($vm,$action){
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.env.Length -eq 0)){
             Write_oh("Parameter is still not set")
             common_exit 1
         }
-        
     }
+    
 }
