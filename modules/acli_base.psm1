@@ -110,6 +110,9 @@ class acli_base{
             $this.input_data.rg = $resourcegroupname
         }
     }
+    set_output([String]$output){
+        $this.input_data.output = $output
+    }
 
     azlogin($env){
         $account = az account show | ConvertFrom-Json
@@ -118,9 +121,10 @@ class acli_base{
             az login
         }
         $this.input_data.Add("env",$env)
+        $this.input_data.Add("output","output")
     }
 
-    azlogin($env){
+    azsplogin($env){
         $account = az account show | ConvertFrom-Json
         if($? -eq $False){
             New-Item -ItemType Directory -Force "credential"
@@ -149,5 +153,6 @@ class acli_base{
             }
         }
         $this.input_data.Add("env",$env)
+        $this.input_data.Add("output","output")
     }
 }
