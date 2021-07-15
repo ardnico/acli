@@ -22,6 +22,23 @@ class azvm : acli_base{
             Write_oh("Parameter is still not set")
             common_exit 1
         }
+        $appgw_info = az network application-gateway show --resource-group $this.input_data.rg --name $name | ConvertFrom-Json
+        $function_remove = {
+            param (
+                [String]$MyResourceGroup,
+                [String]$MyAppGateway,
+                [String]$MyAddressPool,
+                [String]vmip
+            )
+            $tmp_info = az network application-gateway address-pool show -g $MyResourceGroup --gateway-name $MyAppGateway -n $MyAddressPool |ConvertFrom-Json
+            az network application-gateway address-pool update -g $MyResourceGroup --gateway-name $MyAppGateway -n $MyAddressPool --remove backendAddresses $tmp_info.backendaddresspool.ipaddress.IndexOf($vmip)
+        }
+        if($action -eq "add"){
+
+        }elseif($action -eq "remove"){
+            $jobA = Start-Job -ScriptBlock $function_remove -ArgumentList "ABC", "DEF"
+        }
+
     }
     
 }
