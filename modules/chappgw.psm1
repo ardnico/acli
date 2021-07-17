@@ -36,7 +36,10 @@ class azvm : acli_base{
         if($action -eq "add"){
 
         }elseif($action -eq "remove"){
-            $jobA = Start-Job -ScriptBlock $function_remove -ArgumentList "ABC", "DEF"
+            $poollist = az network | ConvertFrom-Json
+            foreach($pool in $poollist){
+            $jobA = Start-Job -ScriptBlock $function_remove -ArgumentList $this.input_data.rg,$this.input_data.appgw,$pool.name,$vmip
+            }
         }
 
     }
