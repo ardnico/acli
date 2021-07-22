@@ -23,6 +23,17 @@ class azvm : acli_base{
             common_exit 1
         }
         $appgw_info = az network application-gateway show --resource-group $this.input_data.rg --name $name | ConvertFrom-Json
+        $vmips = az vm show --resource-group $this.input_data.rg --name $vm | ConvertFrom-Json
+        $function_add = {
+            param (
+                [String]$MyResourceGroup,
+                [String]$MyAppGateway,
+                [String]$MyAddressPool,
+                [String]vmip
+            )
+            $tmp_info = az network application-gateway address-pool show -g $MyResourceGroup --gateway-name $MyAppGateway -n $MyAddressPool |ConvertFrom-Json
+            az network application-gateway address-pool update -g $MyResourceGroup --gateway-name $MyAppGateway -n $MyAddressPool --add backendAddresses $tmp_info.backendaddresspool.ipaddress.IndexOf($vmip)
+        }
         $function_remove = {
             param (
                 [String]$MyResourceGroup,
@@ -33,15 +44,20 @@ class azvm : acli_base{
             $tmp_info = az network application-gateway address-pool show -g $MyResourceGroup --gateway-name $MyAppGateway -n $MyAddressPool |ConvertFrom-Json
             az network application-gateway address-pool update -g $MyResourceGroup --gateway-name $MyAppGateway -n $MyAddressPool --remove backendAddresses $tmp_info.backendaddresspool.ipaddress.IndexOf($vmip)
         }
-        if($action -eq "add"){
-
-        }elseif($action -eq "remove"){
-            $poollist = az network | ConvertFrom-Json
-            foreach($pool in $poollist){
-            $jobA = Start-Job -ScriptBlock $function_remove -ArgumentList $this.input_data.rg,$this.input_data.appgw,$pool.name,$vmip
+        foreach($pool in $appgw_info.~~~~~){
+            foreach($vmip in $vmips.~~~~~~){
+                if($action -eq "add"){
+                    $poollist = az network | ConvertFrom-Json
+                    foreach($pool in $poollist){
+                    $jobA = Start-Job -ScriptBlock $function_add -ArgumentList $this.input_data.rg,$this.input_data.appgw,$pool.name,$vmip
+                    }
+                }elseif($action -eq "remove"){
+                    $poollist = az network | ConvertFrom-Json
+                    foreach($pool in $poollist){
+                    $jobA = Start-Job -ScriptBlock $function_remove -ArgumentList $this.input_data.rg,$this.input_data.appgw,$pool.name,$vmip
+                    }
+                }
             }
         }
-
     }
-    
 }
