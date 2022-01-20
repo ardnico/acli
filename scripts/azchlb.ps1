@@ -1,30 +1,29 @@
-
-##### ä½œæˆä¸­
-
+##### ì¬’†
 
 
-# ç”¨é€”ï¼šAzureCliã‚’åˆ©ç”¨ã—ã¦loadbalancerã®ã‚µã‚¤ã‚ºå¤‰æ›´ãƒ»VMåˆ‡ã‚Šé›¢ã—ã‚’è¡Œã„ã¾ã™
-# azcli_mod_psm1ã¨åŒæ¢±ã—ã¦ä½¿ç”¨ã—ã¾ã™
-# å®Ÿè¡Œç”¨ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã¯execute.ps1ãªã®ã§å®Ÿéš›ã®ä½¿ç”¨æ–¹æ³•ã¯ãã¡ã‚‰ã‚’ã”è¦§ãã ã•ã„
+
+# —p“rFAzureCli‚ğ—˜—p‚µ‚Äloadbalancer‚ÌƒTƒCƒY•ÏXEVMØ‚è—£‚µ‚ğs‚¢‚Ü‚·
+# azcli_mod_psm1‚Æ“¯«‚µ‚Äg—p‚µ‚Ü‚·
+# Às—p‚ÌƒXƒNƒŠƒvƒg‚Íexecute.ps1‚È‚Ì‚ÅÀÛ‚Ìg—p•û–@‚Í‚»‚¿‚ç‚ğ‚²——‚­‚¾‚³‚¢
 
 # Reference 
 # https://docs.microsoft.com/ja-jp/cli/azure/network/nic?view=azure-cli-latest
 
-# åŸºæœ¬ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
+# Šî–{ƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒ|[ƒg
 using module ./scripts/azcli_mod.psm1
 
 class chlb: azmod {
-    # SKUã‚µã‚¤ã‚ºå¤‰æ›´ã¨ã„ã†æ¦‚å¿µã¯ãªã„
+    # SKUƒTƒCƒY•ÏX‚Æ‚¢‚¤ŠT”O‚Í‚È‚¢
 
-    # LBåˆ‡ã‚Šé›¢ã—ãƒ»åˆ‡ã‚Šæˆ»ã—ï¼ˆæ–°è¦è¿½åŠ ï¼‰ç”¨
+    # LBØ‚è—£‚µEØ‚è–ß‚µiV‹K’Ç‰Áj—p
     go_around_ip_from_pool([String]$vmnames,[String]$action){
-        # å¼•æ•°ãƒã‚§ãƒƒã‚¯
+        # ˆø”ƒ`ƒFƒbƒN
         if(($action -ne "remove") -and ($action -ne "add")){
-            Write_OH("ç¬¬äºŒå¼•æ•°ã«æŒ‡å®šã—ãŸå€¤ãŒèª¤ã£ã¦ã„ã¾ã™ã€‚ (remove / add)")
+            Write_OH("‘æ“ñˆø”‚Éw’è‚µ‚½’l‚ªŒë‚Á‚Ä‚¢‚Ü‚·B (remove / add)")
             exit_common 1
         }
         if($this.input_data.lb.Length -eq 0){
-            Write_OH("ãƒ­ãƒ¼ãƒ‰ãƒãƒ©ãƒ³ã‚µåãŒå¤‰æ•°input_dataã«è¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“")
+            Write_OH("ƒ[ƒhƒoƒ‰ƒ“ƒT–¼‚ª•Ï”input_data‚Éİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ")
             exit_common 1
         }
         $lb_info = az resource show --resource-group $this.input_data.rg --name $this.input_data.lb --resource-type "Microsoft.Network/loadBalancers" | ConvertFrom-Json
@@ -32,7 +31,7 @@ class chlb: azmod {
 
         [int]$hlist_all = $lb_info.properties.backendAddressPools.properties.backendIPConfigurations.id.Count
         [int]$exe_num = 0
-        # åˆ‡ã‚Šé›¢ã—ã®é–¢æ•°å®£è¨€
+        # Ø‚è—£‚µ‚ÌŠÖ”éŒ¾
         $function_remove_ip = {
             param (
                 [String]$ipname,
@@ -42,7 +41,7 @@ class chlb: azmod {
             )
             az network lb address-pool address remove -g $rg --lb-name $lb --pool-name $poolname -n $ipname
         }
-        # æ¥ç¶šæ™‚ã®é–¢æ•°å®£è¨€
+        # Ú‘±‚ÌŠÖ”éŒ¾
         $function_add_ip = {
             param (
                 [String]$ipname,
@@ -55,37 +54,37 @@ class chlb: azmod {
         }
         $pool_and_ip = @{}
         foreach($vmname in $vmnames.split(",")){
-            # ipã‚¢ãƒ‰ãƒ¬ã‚¹ã®å–å¾—
+            # ipƒAƒhƒŒƒX‚Ìæ“¾
             $vmnicids = (az vm show -g $this.input_data.rg -n $vmname | ConvertFrom-Json).networkProfile.networkInterfaces.id
             $vmips = foreach($oneid in $vmnicids){(az resource show --ids $oneid | ConvertFrom-Json).properties.ipConfigurations.properties.privateIPAddress}
-            # ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ãƒ—ãƒ¼ãƒ«ã®å–å¾—
+            # ƒoƒbƒNƒGƒ“ƒhƒv[ƒ‹‚Ìæ“¾
             foreach($vmip in $vmips){$pool_and_ip.Add($vmip,"")}
             $pool_list = az network application-gateway address-pool list --gateway-name $name --resource-group $this.input_data.rg | ConvertFrom-Json
-            # poolã®æ•°ã ã‘åˆ‡ã‚Šé›¢ã—å®Ÿè¡Œ
+            # pool‚Ì”‚¾‚¯Ø‚è—£‚µÀs
             foreach($pool in $pool_list){
-                # äº‹å‰æƒ…å ±å–å¾—ã®æ›¸ãå‡ºã—
+                # –‘Oî•ñæ“¾‚Ì‘‚«o‚µ
                 Write_OH("Prior info/ BackendPoolName: $($pool.name) Ipaddress: $($pool.backendAddresses.ipAddress) ")
                 if($action -eq "remove"){
                     foreach($vmip in $vmips){
-                        # VMã®IPã‚¢ãƒ‰ãƒ¬ã‚¹ãŒå­˜åœ¨ã™ã‚‹å ´åˆã¯åˆ‡ã‚Šé›¢ã—ã™ã‚‹
+                        # VM‚ÌIPƒAƒhƒŒƒX‚ª‘¶İ‚·‚éê‡‚ÍØ‚è—£‚µ‚·‚é
                         if($pool.backendAddresses.ipAddress.IndexOf($vmip) -ne -1){
-                            # åˆ‡ã‚Šé›¢ã—ã‚³ãƒãƒ³ãƒ‰ã‚’ã‚µã‚µã£ã¨æŠ•ã’ã‚‹
-                            Write_OH("åˆ‡ã‚Šé›¢ã—å®Ÿè¡Œ : $vmip BEP: $($pool.name)")
+                            # Ø‚è—£‚µƒRƒ}ƒ“ƒh‚ğƒTƒT‚Á‚Æ“Š‚°‚é
+                            Write_OH("Ø‚è—£‚µÀs : $vmip BEP: $($pool.name)")
                             $jobA = Start-Job -ScriptBlock $function_remove_ip -ArgumentList $vmip,$name,$($this.input_data.rg),$($pool.name)
                             $exe_num += 1
-                            # åˆ‡ã‚Šé›¢ã—ãŸIPã‚¢ãƒ‰ãƒ¬ã‚¹ã¨ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ãƒ—ãƒ¼ãƒ«ã‚’ãƒ¡ãƒ¢ãƒ•ã‚¡ã‚¤ãƒ«ã«è¿½è¨˜
+                            # Ø‚è—£‚µ‚½IPƒAƒhƒŒƒX‚ÆƒoƒbƒNƒGƒ“ƒhƒv[ƒ‹‚ğƒƒ‚ƒtƒ@ƒCƒ‹‚É’Ç‹L
                             if($pool_and_ip.($vmip).Length -gt 0){$pool_and_ip.($vmip) += ","}
                             $pool_and_ip.($vmip) += [String]$pool.name
                         }
                     }
                 }elseif($action -eq "add"){
-                    # åˆ‡ã‚Šé›¢ã—æ™‚ã®ä¸€æ™‚ä¿å­˜ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿å–ã‚Šâ€»å­˜åœ¨ã—ãªã„å ´åˆã¯ãã®ã¾ã¾å…¨BackendPoolã«è¿½åŠ ã™ã‚‹
+                    # Ø‚è—£‚µ‚Ìˆê•Û‘¶ƒf[ƒ^‚Ì“Ç‚İæ‚è¦‘¶İ‚µ‚È‚¢ê‡‚Í‚»‚Ì‚Ü‚Ü‘SBackendPool‚É’Ç‰Á‚·‚é
                     if(Test-Path "$($this.input_data.output)/$($vmname)_poolinfo.json"){
                         $priorpoolinfo = Get-Content "$($this.input_data.output)/$($vmname)_poolinfo.json" | ConvertFrom-Json
                     }else{
                         $priorpoolinfo = @{}
                     }
-                    # ä¸€æ™‚ä¿å­˜ãƒ‡ãƒ¼ã‚¿ã«ãƒãƒƒã‚¯ã‚¨ãƒ³ãƒ‰ãƒ—ãƒ¼ãƒ«åãŒãªã‘ã‚Œã°ã€IPã‚¢ãƒ‰ãƒ¬ã‚¹ã¯è¿½åŠ ã—ãªã„
+                    # ˆê•Û‘¶ƒf[ƒ^‚ÉƒoƒbƒNƒGƒ“ƒhƒv[ƒ‹–¼‚ª‚È‚¯‚ê‚ÎAIPƒAƒhƒŒƒX‚Í’Ç‰Á‚µ‚È‚¢
                     foreach($vmip in $vmips){
                         if($priorpoolinfo.Count -ne 0){
                             $tmp_line_array = $priorpoolinfo.($vmip).split(",")
@@ -96,17 +95,17 @@ class chlb: azmod {
                         Write_OH("vmip: $vmip")
                         Write_OH($pool.name)
                         if($tmp_line_array.Length -gt 0){
-                            # å…¨å°æŠ•å…¥ç”¨
+                            # ‘S‘ä“Š“ü—p
                             if($tmp_line_array.($vmip).Length -eq 0){
                                 if($tmp_line_array.IndexOf($pool.name) -ne -1){
-                                    Write_OH("æ¥ç¶šå®Ÿè¡Œ : $vmip BEP: $($pool.name)")
+                                    Write_OH("Ú‘±Às : $vmip BEP: $($pool.name)")
                                     $jobA = Start-Job -ScriptBlock $function_add_ip -ArgumentList $vmip,$name,$this.input_data.rg,$pool.name
                                     $exe_num += 1
                                 }
                             }else{
-                                # ãƒ¡ãƒ¢ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‚è€ƒã«IPã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’AppGWã¸è¿½åŠ 
+                                # ƒƒ‚ƒtƒ@ƒCƒ‹‚ğQl‚ÉIPƒAƒhƒŒƒX‚ğAppGW‚Ö’Ç‰Á
                                 if($tmp_line_array.($vmip).IndexOf($pool.name) -ne -1){
-                                    Write_OH("æ¥ç¶š : $vmip BEP: $($pool.name)")
+                                    Write_OH("Ú‘± : $vmip BEP: $($pool.name)")
                                     $jobA = Start-Job -ScriptBlock $function_add_ip -ArgumentList $vmip,$name,$this.input_data.rg,$pool.name
                                     $exe_num += 1
                                 }
@@ -123,7 +122,7 @@ class chlb: azmod {
         $err_num = 0
         while($err_num -lt $border_num+1){
             if($err_num -gt $border_num -1){
-                Write_OH("99ç§’ä»¥ä¸ŠçµŒéã—ã¾ã—ãŸã€‚ å‡¦ç†ã‚’ç¶šè¡Œã—ã¾ã™ã‹ï¼Ÿ")
+                Write_OH("99•bˆÈãŒo‰ß‚µ‚Ü‚µ‚½B ˆ—‚ğ‘±s‚µ‚Ü‚·‚©H")
                 $judge = Read-Host("y/n")
                 if($judge[0] -eq "y"){
                     $err_num += 500
@@ -150,24 +149,24 @@ class chlb: azmod {
         }
         $pool_list = az network application-gateway address-pool list --gateway-name $name --resource-group $this.input_data.rg | ConvertFrom-Json
         foreach($pool in $pool_list){
-            # äº‹å¾Œæƒ…å ±å–å¾—ã®æ›¸ãå‡ºã—
+            # –Œãî•ñæ“¾‚Ì‘‚«o‚µ
             Write_OH("Posterior info/ BackendPoolName: $($pool.name) Ipaddress: $($pool.backendAddresses.ipAddress) ")
         }
-        Write_OH("å‡¦ç†å®Œäº†")
+        Write_OH("ˆ—Š®—¹")
     }
 
-    # ç‰¹å®šFQDNã«é–¢ã™ã‚‹Appgwä¸Šã®è¨­å®šå‚ç…§
+    # “Á’èFQDN‚ÉŠÖ‚·‚éAppgwã‚Ìİ’èQÆ
     [System.Object]showSettingAboutFQDN($fqdn){
         $appgw_info = az network application-gateway show --resource-group $this.input_data.rg --name $this.input_data.appgw
         Write-Output($appgw_info) > "$($this.input_data.output)/$($this.input_data.appgw)_$(Get-Date -Format "yyyyMMddhhmmss").json"
         $appgw_info = $appgw_info | ConvertFrom-json
-        Write_OH("ä»¥ä¸‹ã¯ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚²ãƒ¼ãƒˆã‚¦ã‚§ã‚¤å†…ã«å«ã¾ã‚Œã‚‹è¨­å®šã§ã™")
+        Write_OH("ˆÈ‰º‚ÍƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒQ[ƒgƒEƒFƒC“à‚ÉŠÜ‚Ü‚ê‚éİ’è‚Å‚·")
         Write_OH("------------------------------------------------------------")
-        # å¯¾è±¡ã®æƒ…å ±ã‚’åé›†
+        # ‘ÎÛ‚Ìî•ñ‚ğûW
         # backendAddressPools
         Write_OH("<backendAddressPools>")
         Write_OH($appgw_info.backendAddressPools.name)
-        Write_OH("-ä»¥ä¸‹ã¯å¯¾è±¡id")
+        Write_OH("-ˆÈ‰º‚Í‘ÎÛid")
         $backendAddressPools = $appgw_info.backendAddressPools.name | Where-Object{$_.Contains($fqdn)}
         foreach($bname in $backendAddressPools){
             Write_OH((az network application-gateway address-pool show --resource-group $this.input_data.rg --gateway-name $this.input_data.appgw --name $bname | ConvertFrom-json).id)
@@ -175,7 +174,7 @@ class chlb: azmod {
         # backendHttpSettingsCollection
         Write_OH("<backendHttpSettingsCollection>")
         Write_OH($appgw_info.backendHttpSettingsCollection.name)
-        Write_OH("-ä»¥ä¸‹ã¯å¯¾è±¡id")
+        Write_OH("-ˆÈ‰º‚Í‘ÎÛid")
         $backendHttpSettingsCollection = $appgw_info.backendHttpSettingsCollection.name | Where-Object{$_.Contains($fqdn)}
         foreach($bhname in $backendHttpSettingsCollection){
             Write_OH((az network application-gateway http-settings show --resource-group $this.input_data.rg --gateway-name $this.input_data.appgw --name $bhname | ConvertFrom-json).id)
@@ -183,7 +182,7 @@ class chlb: azmod {
         # httpListeners
         Write_OH("<httpListeners>")
         Write_OH($appgw_info.httpListeners.name)
-        Write_OH("-ä»¥ä¸‹ã¯å¯¾è±¡id")
+        Write_OH("-ˆÈ‰º‚Í‘ÎÛid")
         $httpListeners = $appgw_info.httpListeners.name | Where-Object{$_.Contains($fqdn)}
         foreach($hlname in $httpListeners){
             Write_OH((az network application-gateway http-listener show --resource-group $this.input_data.rg --gateway-name $this.input_data.appgw --name $hlname | ConvertFrom-json).id)
@@ -191,7 +190,7 @@ class chlb: azmod {
         # probes
         Write_OH("<probes>")
         Write_OH($appgw_info.probes.name)
-        Write_OH("-ä»¥ä¸‹ã¯å¯¾è±¡id")
+        Write_OH("-ˆÈ‰º‚Í‘ÎÛid")
         $probes = $appgw_info.probes.name | Where-Object{$_.Contains($fqdn)}
         foreach($pname in $probes){
             Write_OH((az network application-gateway probe show --resource-group $this.input_data.rg --gateway-name $this.input_data.appgw --name $pname | ConvertFrom-json).id)
@@ -199,7 +198,7 @@ class chlb: azmod {
         # requestRoutingRules
         Write_OH("<requestRoutingRules>")
         Write_OH($appgw_info.requestRoutingRules.name)
-        Write_OH("-ä»¥ä¸‹ã¯å¯¾è±¡id")
+        Write_OH("-ˆÈ‰º‚Í‘ÎÛid")
         $requestRoutingRules = $appgw_info.requestRoutingRules.name | Where-Object{$_.Contains($fqdn)}
         foreach($rrrname in $requestRoutingRules){
             Write_OH((az network application-gateway rule show --resource-group $this.input_data.rg --gateway-name $this.input_data.appgw --name $rrrname | ConvertFrom-json).id)
@@ -207,7 +206,7 @@ class chlb: azmod {
         # sslCertificates
         Write_OH("<sslCertificates>")
         Write_OH($appgw_info.sslCertificates.name)
-        Write_OH("-ä»¥ä¸‹ã¯å¯¾è±¡id")
+        Write_OH("-ˆÈ‰º‚Í‘ÎÛid")
         try{
             $sslCertificates = $appgw_info.sslCertificates.name | Where-Object{$_.Contains($fqdn)}
             foreach($scname in $sslCertificates){
@@ -219,13 +218,13 @@ class chlb: azmod {
         return $appgw_info
     }
 
-    # ç‰¹å®šFQDNã«é–¢ã™ã‚‹è¨­å®šã®å‰Šé™¤
+    # “Á’èFQDN‚ÉŠÖ‚·‚éİ’è‚Ìíœ
     removeSettingAboutFQDN($fqdn){
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.appgw.Length -eq 0)){
-            Write_OH('å¤‰æ•°ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“')
+            Write_OH('•Ï”‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ')
             exit_common 1
         }
-        # backgroundjobã®è¨­å®š
+        # backgroundjob‚Ìİ’è
         $function_rm_probe = {
             param (
                 [String]$rg,
@@ -288,9 +287,9 @@ class chlb: azmod {
         }
 
         $appgw_info = $this.showSettingAboutFQDN($fqdn)
-        $select = Read-Host("å‰Šé™¤ã‚’å®Ÿæ–½ã—ã¦ã„ã„ã§ã™ã‹ï¼Ÿ(y/n)")
+        $select = Read-Host("íœ‚ğÀ{‚µ‚Ä‚¢‚¢‚Å‚·‚©H(y/n)")
         if($select[0] -eq "y"){
-            # å‰Šé™¤å®Ÿæ–½
+            # íœÀ{
             # probes
             Write_OH("probes")
             $probes = $appgw_info.probes.name | Where-Object{$_.Contains($fqdn)}
@@ -394,22 +393,22 @@ class chlb: azmod {
                     }
                 }
             }
-            Write_OH("å‡¦ç†å®Œäº†")
-            Write_OH("äº‹å¾Œæƒ…å ±ç¢ºèª")
+            Write_OH("ˆ—Š®—¹")
+            Write_OH("–Œãî•ñŠm”F")
             $appgw_info = $this.showSettingAboutFQDN($fqdn)
         }else{
-            Write_OH("å‡¦ç†ã¯ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã•ã‚Œã¾ã—ãŸ")
+            Write_OH("ˆ—‚ÍƒLƒƒƒ“ƒZƒ‹‚³‚ê‚Ü‚µ‚½")
         }
     }
 
     compare_2obj($obj1,$obj2){
         if(($obj1.Length -eq 0) -and ($obj2.Length -eq 0)){
-            Write_OH("æ¯”è¼ƒå¯¾è±¡ãŒã‚ã‚Šã¾ã›ã‚“")
+            Write_OH("”äŠr‘ÎÛ‚ª‚ ‚è‚Ü‚¹‚ñ")
             return
         }
         if(($obj1.Length -eq 0) -and ($obj2.Length -ne 0)){
-            Write_OH("APGW2ã«ã®ã¿è¨­å®šã‚ã‚Š")
-            Write_OH("ä»¥ä¸‹è¿½åŠ è¨­å®šå†…å®¹")
+            Write_OH("APGW2‚É‚Ì‚İİ’è‚ ‚è")
+            Write_OH("ˆÈ‰º’Ç‰Áİ’è“à—e")
             foreach($onedata in $obj2){
                 $info_name = ($onedata | Get-member | Where-Object{$_.MemberType -ne "Method"}).name
                 foreach($mem in $info_name){
@@ -418,8 +417,8 @@ class chlb: azmod {
                 }
             }
         }elseif(($obj1.Length -ne 0) -and ($obj2.Length -eq 0)){
-            Write_OH("<<<<APGW1ã«ã®ã¿è¨­å®šã‚ã‚Š>>>")
-            Write_OH("ä»¥ä¸‹è¿½åŠ è¨­å®šå†…å®¹")
+            Write_OH("<<<<APGW1‚É‚Ì‚İİ’è‚ ‚è>>>")
+            Write_OH("ˆÈ‰º’Ç‰Áİ’è“à—e")
             foreach($onedata in $obj1){
                 $info_name = ($onedata | Get-member | Where-Object{$_.MemberType -ne "Method"}).name
                 foreach($mem in $info_name){
@@ -428,14 +427,14 @@ class chlb: azmod {
                 }
             }
         }else{
-            # å·®åˆ†æ¯”è¼ƒ
+            # ·•ª”äŠr
             foreach($onedata in $obj1){
                 if($obj2.name.IndexOf($onedata.name) -ne -1){
-                    # åŒä¸€åã®è¨­å®šãŒå­˜åœ¨ã™ã‚‹å ´åˆ
+                    # “¯ˆê–¼‚Ìİ’è‚ª‘¶İ‚·‚éê‡
                     $info_name = ($onedata | Get-member | Where-Object{$_.MemberType -ne "Method"}).name
                     foreach($mem in $info_name){
                         if(($mem -ne $null) -and ($mem.Length -ne 0)){
-                            Write_OH("<<<å·®åˆ†æ¯”è¼ƒ>>>")
+                            Write_OH("<<<·•ª”äŠr>>>")
                             Write_OH("-----------------------------$mem")
                             if(($($obj1.($mem)) -ne $null) -and ($($obj2.($mem)) -ne $null)){
                                 try{
@@ -460,7 +459,7 @@ class chlb: azmod {
                         }
                     }
                 }else{
-                    Write_OH("<<<APGW1 ã«ã®ã¿å­˜åœ¨>>>")
+                    Write_OH("<<<APGW1 ‚É‚Ì‚İ‘¶İ>>>")
                     $info_name = ($onedata | Get-member | Where-Object{$_.MemberType -ne "Method"}).name
                     foreach($mem in $info_name){
                         Write_OH("-----------------------------$mem")
@@ -470,7 +469,7 @@ class chlb: azmod {
             }
             foreach($onedata in $obj2){
                 if($obj1.name.IndexOf($onedata.name) -eq -1){
-                    Write_OH("<<<APGW2 ã«ã®ã¿å­˜åœ¨>>>")
+                    Write_OH("<<<APGW2 ‚É‚Ì‚İ‘¶İ>>>")
                     $info_name = ($onedata | Get-member | Where-Object{$_.MemberType -ne "Method"}).name
                     foreach($mem in $info_name){
                         Write_OH("-----------------------------$mem")
@@ -484,7 +483,7 @@ class chlb: azmod {
 
     diff_Appgw([String]$appgw1,[String]$appgw2,[String]$rg,[String]$fqdn){
         if(($appgw1.Length -eq 0) -or ($appgw2.Length -eq 0)){
-            Write_OH("ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚")
+            Write_OH("ƒpƒ‰ƒ[ƒ^[‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB")
             exit_common 1
         }
         $appgw1_data = az network application-gateway show --resource-group $rg --name $appgw1 | ConvertFrom-Json
@@ -517,3 +516,4 @@ class chlb: azmod {
     }
 
 }
+

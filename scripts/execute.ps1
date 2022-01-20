@@ -1,12 +1,10 @@
-
-
-# æ›´æ–°å±¥æ­´
+# XV—š—ğ
 # 2021/07/15 Ver 1.0 release
-# ã€€å®Ÿè£…æ©Ÿèƒ½ã€€ï¼šã€€Appgwã‚µã‚¤ã‚ºå¤‰æ›´,AppGWã‹ã‚‰ã®VMåˆ‡ã‚Šé›¢ã—ãƒ»æ¥ç¶š,VMãƒ»AppGWãƒ¡ãƒˆãƒªãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
-# ã€€å®Ÿè£…äºˆå®šã€€ï¼šã€€VMã‚µã‚¤ã‚ºå¤‰æ›´,å„ç¨®ãƒªã‚½ãƒ¼ã‚¹å‰Šé™¤,AppGWè¨­å®šè¿½åŠ ,ãƒ¡ãƒˆãƒªãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿ã¨é€£æºã—ã¦VMã‚µã‚¤ã‚ºå¤‰æ›´(VMä½œæˆ,AppGWâ€»ä½œæˆæ¨©é™ã®é–¢ä¿‚ã§å„ªå…ˆåº¦ä½)
+# @À‘•‹@”\@F@AppgwƒTƒCƒY•ÏX,AppGW‚©‚ç‚ÌVMØ‚è—£‚µEÚ‘±,VMEAppGWƒƒgƒŠƒbƒNƒf[ƒ^‚Ìæ“¾
+# @À‘•—\’è@F@VMƒTƒCƒY•ÏX,ŠeíƒŠƒ\[ƒXíœ,AppGWİ’è’Ç‰Á,ƒƒgƒŠƒbƒNƒf[ƒ^‚Æ˜AŒg‚µ‚ÄVMƒTƒCƒY•ÏX(VMì¬,AppGW¦ì¬Œ ŒÀ‚ÌŠÖŒW‚Å—Dæ“x’á)
 
 
-# CSVãƒ‡ãƒ¼ã‚¿å–å¾—
+# CSVƒf[ƒ^æ“¾
 $csvdata = Get-Content ".\Parameter.csv" | ConvertFrom-Csv
 $logfile = "output\az_$(Get-Date -Format "yyyyMMddhhmmss").log"
 New-Item -Force -ItemType Directory "output"
@@ -16,13 +14,13 @@ Start-transcript $logfile
 foreach($onedata in $csvdata){
     $rg = $onedata.ResourceGroupName
     if($onedata.Action.Contains("AppGW")){
-        # AppGWå¤‰æ›´
+        # AppGW•ÏX
         . ./scripts/azchappgw.ps1
         $az_instance = New-Object chappgw
         $az_instance.azlogin($onedata.Env)
         $az_instance.set_appgw([String]$onedata.Target,[String]$rg)
         if($onedata.Action -eq "chAppGWsize"){
-            # ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã‚²ãƒ¼ãƒˆã‚¦ã‚§ã‚¤ã®æ§‹æˆã‚µã‚¤ã‚ºå¤‰æ›´
+            # ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ƒQ[ƒgƒEƒFƒC‚Ì\¬ƒTƒCƒY•ÏX
             $az_instance.ch_size([int]$onedata.Param1,[String]$onedata.Param2)
         }elseif($onedata.Action -eq "isolatefromAppGW"){
             $az_instance.go_around_ip_from_pool([String]$onedata.Param1,"remove")
@@ -34,7 +32,7 @@ foreach($onedata in $csvdata){
         }elseif($onedata.Action -eq "ddiffAppGW"){
             $az_instance.diff_Appgw([String]$onedata.Target,[String]$onedata.Param1,[String]$rg,[String]$onedata.Param2)
         }else{
-            Write_OH("æœªè¨­å®šã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã§ã™")
+            Write_OH("–¢İ’è‚ÌƒAƒNƒVƒ‡ƒ“‚Å‚·")
         }
     }elseif($onedata.Action.Contains("GetPerf")){
         . ./scripts/Get-perf.ps1
@@ -76,10 +74,10 @@ foreach($onedata in $csvdata){
                 $Exec_gp.get_activity_log($vmname)
             }
         }else{
-            Write_OH("æœªè¨­å®šã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã§ã™")
+            Write_OH("–¢İ’è‚ÌƒAƒNƒVƒ‡ƒ“‚Å‚·")
         }
     }else{
-        Write_OH("æœªè¨­å®šã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã§ã™")
+        Write_OH("–¢İ’è‚ÌƒAƒNƒVƒ‡ƒ“‚Å‚·")
     }
 }
 Stop-transcript

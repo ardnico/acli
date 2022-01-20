@@ -1,11 +1,10 @@
+# —p“rFAzureCli‚ğ—˜—p‚µ‚½ps1ƒXƒNƒŠƒvƒg‘€ì‚ÌŒ³‚Æ‚È‚éƒ‚ƒWƒ…[ƒ‹‚Å‚·B
+# ‚±‚ê’P‘Ì‚Å‚àƒƒOƒCƒ“‚Ég—p‚Å‚«‚Ü‚·
+# Às—p‚ÌƒXƒNƒŠƒvƒg‚Íexecute.ps1‚È‚Ì‚ÅÀÛ‚Ìg—p•û–@‚Í‚»‚¿‚ç‚ğ‚²——‚­‚¾‚³‚¢
 
-# ç”¨é€”ï¼šAzureCliã‚’åˆ©ç”¨ã—ãŸps1ã‚¹ã‚¯ãƒªãƒ—ãƒˆæ“ä½œã®å…ƒã¨ãªã‚‹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã§ã™ã€‚
-# ã“ã‚Œå˜ä½“ã§ã‚‚ãƒ­ã‚°ã‚¤ãƒ³ã«ä½¿ç”¨ã§ãã¾ã™
-# å®Ÿè¡Œç”¨ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã¯execute.ps1ãªã®ã§å®Ÿéš›ã®ä½¿ç”¨æ–¹æ³•ã¯ãã¡ã‚‰ã‚’ã”è¦§ãã ã•ã„
 
-
-# åŸºæœ¬å¾€æŸ»ã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹ã¯ã“ã“ã«è¨˜è¼‰
-# ä»¥ä¸‹ã®ã‚ˆã†ã«ç¶™æ‰¿ã—ã¦ã‚¯ãƒ©ã‚¹ã‚’ç·¨é›†ã—ã¦ä½¿ç”¨ãã ã•ã„
+# Šî–{‰¸‚ÉŠÖ‚·‚éƒNƒ‰ƒX‚Í‚±‚±‚É‹LÚ
+# ˆÈ‰º‚Ì‚æ‚¤‚ÉŒp³‚µ‚ÄƒNƒ‰ƒX‚ğ•ÒW‚µ‚Äg—p‚­‚¾‚³‚¢
 
 
 # using module ./azcli_mod.psm1
@@ -19,7 +18,7 @@
 # }
 
 
-# ä½¿ç”¨ä¾‹
+# g—p—á
 # . ./extendClass.ps1
 
 # $classInstance = New-Object extendClass
@@ -28,7 +27,7 @@
 # $type = "Microsoft.Compute/virtualMachines"
 # $classInstance.set_resource($rg,$resources,$type)
 
-# $env = "ç ”ç©¶"
+# $env = "Œ¤‹†"
 # $classInstance.azlogin($env)
 
 
@@ -37,7 +36,7 @@ $Error.Clear()
 $global:DefaultErrorActionPreference=[String]$ErrorActionPreference
 $ErrorActionPreference="Continue"
 
-# å‡ºåŠ›ã«é–¢ã™ã‚‹é–¢æ•°
+# o—Í‚ÉŠÖ‚·‚éŠÖ”
 function Write_OH($arg1){
     $line = "$(Get-Date -Format "[yyyy/MM/dd HH:mm:ss]") $arg1"
     Write-Host($line)
@@ -45,14 +44,14 @@ function Write_OH($arg1){
     return
 }
 
-# çµ‚äº†å‡¦ç†
+# I—¹ˆ—
 function exit_common($arg1){
-    #æ­£å¸¸çµ‚äº†æ™‚
+    #³íI—¹
     if ($arg1 -eq 0 ) {
-        Write_OH("ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯æ­£å¸¸çµ‚äº†ã—ã¾ã—ãŸ") 
-    #ç•°å¸¸çµ‚äº†æ™‚
+        Write_OH("ƒvƒƒOƒ‰ƒ€‚Í³íI—¹‚µ‚Ü‚µ‚½") 
+    #ˆÙíI—¹
     }else{
-        Write_OH("ãƒ—ãƒ­ã‚°ãƒ©ãƒ ã¯å‡¦ç†ã‚’ä¸­æ–­ã—ã¾ã—ãŸ") 
+        Write_OH("ƒvƒƒOƒ‰ƒ€‚Íˆ—‚ğ’†’f‚µ‚Ü‚µ‚½") 
     }
     $ErrorActionPreference=$DefaultErrorActionPreference
     exit $arg1
@@ -62,21 +61,21 @@ function exit_common($arg1){
 class azmod{
     $global:input_data = @{}
 
-    # å¤‰æ•°æ ¼ç´ç”¨
+    # •Ï”Ši”[—p
     set_resources([String]$rg,[String]$resources,[String]$keyname,[String]$type){
         $rlist = (az resource list --resource-group $rg | ConvertFrom-Json)
         if($? -eq $False){
-            Write_OH("ãƒªã‚½ãƒ¼ã‚¹ã‚°ãƒ«ãƒ¼ãƒ—ã®æŒ‡å®šãŒèª¤ã£ã¦ã„ã¾ã™") 
+            Write_OH("ƒŠƒ\[ƒXƒOƒ‹[ƒv‚Ìw’è‚ªŒë‚Á‚Ä‚¢‚Ü‚·") 
             exit_common 1
         }
         if($rlist.Length -eq 0){
-            Write_OH("ãƒªã‚½ãƒ¼ã‚¹ã‚°ãƒ«ãƒ¼ãƒ—ã®æŒ‡å®šãŒèª¤ã£ã¦ã„ã¾ã™") 
+            Write_OH("ƒŠƒ\[ƒXƒOƒ‹[ƒv‚Ìw’è‚ªŒë‚Á‚Ä‚¢‚Ü‚·") 
             exit_common 1
         }
         if(($rlist.type | sort | Get-Unique | Where-Object{$_ -eq $type}).Count -eq 0){
-            Write_OH("typeã®æŒ‡å®šãŒé–“é•ãˆã¦ã„ã¾ã™")
-            Write_OH("å…¥åŠ›ãƒ‡ãƒ¼ã‚¿: $type")
-            Write_OH("ä¸‹è¨˜ä¸€è¦§ã‚’å‚è€ƒã«æŒ‡å®šã—ãªãŠã—ã¦ãã ã•ã„ \n $rlist")
+            Write_OH("type‚Ìw’è‚ªŠÔˆá‚¦‚Ä‚¢‚Ü‚·")
+            Write_OH("“ü—Íƒf[ƒ^: $type")
+            Write_OH("‰º‹Lˆê——‚ğQl‚Éw’è‚µ‚È‚¨‚µ‚Ä‚­‚¾‚³‚¢ \n $rlist")
             exit_common 1
         }
         $exit_code = 0
@@ -85,22 +84,22 @@ class azmod{
             $target_info = $rlist|Where-Object{$_.name -eq $target}
             Write_OH("Resource Name: $target")  
             if($target_info.name -ne $target){
-                Write_OH("å­˜åœ¨ã—ãªã„ãƒªã‚½ãƒ¼ã‚¹åãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã™")ã€€
+                Write_OH("‘¶İ‚µ‚È‚¢ƒŠƒ\[ƒX–¼‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚·")@
                 Write_OH("Value: $($target.name)") 
                 $exit_code += 1
             }
             Write_OH("ResourceGroupName: $($target_info.type)") 
             if($target_info.type -ne $type){
-                Write_OH("$($target_info.type) ä»¥å¤–ã®ã‚¿ã‚¤ãƒ—åãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã™")
+                Write_OH("$($target_info.type) ˆÈŠO‚Ìƒ^ƒCƒv–¼‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚·")
                 Write_OH("Value: $type")
                 $exit_code += 1
             }
         }
-        # å•é¡ŒãŒã‚ã‚‹å ´åˆã¯å‡¦ç†çµ‚äº†
+        # –â‘è‚ª‚ ‚éê‡‚Íˆ—I—¹
         if($exit_code -gt 0){
             exit_common $exit_code
         }
-        # å•é¡ŒãŒãªã‘ã‚Œã°ãã®ã¾ã¾å¤‰æ•°ã«å€¤ã‚’æ ¼ç´
+        # –â‘è‚ª‚È‚¯‚ê‚Î‚»‚Ì‚Ü‚Ü•Ï”‚É’l‚ğŠi”[
         if($this.input_data.rg.Length -eq 0){
             $this.input_data.Add( "rg", $rg )
         }
@@ -110,14 +109,14 @@ class azmod{
     set_resource([String]$rg,[String]$resource,[String]$keyname,[String]$type){
         $rlist = (az resource list --resource-group $rg | ConvertFrom-Json)
         if(($? -eq $False) -or ($rlist.Length -eq 0)){
-            Write_OH("ãƒªã‚½ãƒ¼ã‚¹ã‚°ãƒ«ãƒ¼ãƒ—ã®æŒ‡å®šãŒèª¤ã£ã¦ã„ã¾ã™") 
+            Write_OH("ƒŠƒ\[ƒXƒOƒ‹[ƒv‚Ìw’è‚ªŒë‚Á‚Ä‚¢‚Ü‚·") 
             $exit_code += 1
             exit_common 1
         }
         if(($rlist.type | sort | Get-Unique | Where-Object{$_ -eq $type}).Count -eq 0){
-            Write_OH("typeã®è¡¨è¨˜ãŒé–“é•ãˆã¦ã„ã¾ã™")
-            Write_OH("å…¥åŠ›ãƒ‡ãƒ¼ã‚¿: $type")
-            Write_OH("ä¸‹è¨˜ä¸€è¦§ã‚’å‚è€ƒã«æŒ‡å®šã—ãªãŠã—ã¦ãã ã•ã„")
+            Write_OH("type‚Ì•\‹L‚ªŠÔˆá‚¦‚Ä‚¢‚Ü‚·")
+            Write_OH("“ü—Íƒf[ƒ^: $type")
+            Write_OH("‰º‹Lˆê——‚ğQl‚Éw’è‚µ‚È‚¨‚µ‚Ä‚­‚¾‚³‚¢")
             Write_OH($rlist.type | sort | Get-Unique)
             exit_common 1
         }
@@ -125,34 +124,34 @@ class azmod{
         $target_info = $rlist|Where-Object{$_.name -eq $resource}
         Write_OH("Resource Name: $resource")  
         if($target_info.name -ne $resource){
-            Write_OH("å­˜åœ¨ã—ãªã„ãƒªã‚½ãƒ¼ã‚¹åãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã™")ã€€
+            Write_OH("‘¶İ‚µ‚È‚¢ƒŠƒ\[ƒX–¼‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚·")@
             Write_OH("Value: $($target_info)") 
             exit_common 1
         }
         Write_OH("Resourcetype: $($target_info.type)") 
         if($target_info.type -ne $type){
-            Write_OH("$($target_info.type) ä»¥å¤–ã®ãƒªã‚½ãƒ¼ã‚¹ãŒæŒ‡å®šã•ã‚Œã¦ã„ã¾ã™")
+            Write_OH("$($target_info.type) ˆÈŠO‚ÌƒŠƒ\[ƒX‚ªw’è‚³‚ê‚Ä‚¢‚Ü‚·")
             Write_OH("Value: $type")
             exit_common 1
         }
-        # å•é¡ŒãŒãªã‘ã‚Œã°ãã®ã¾ã¾å¤‰æ•°ã«å€¤ã‚’æ ¼ç´
+        # –â‘è‚ª‚È‚¯‚ê‚Î‚»‚Ì‚Ü‚Ü•Ï”‚É’l‚ğŠi”[
         if($this.input_data.rg.Length -eq 0){
             $this.input_data.Add( "rg", $rg )
         }
         $this.input_data.Add( $keyname, $resource )
     }
 
-    # å¤‰æ•°æ ¼ç´ç”¨
+    # •Ï”Ši”[—p
     set_appgw([String]$appgw,[String]$rg){
         $keyname = "appgw"
         $type = "Microsoft.Network/applicationGateways"
         if($this.input_data.appgw.Length -eq 0){
             $this.set_resource($rg,$appgw,$keyname,$type)
         }elseif($this.input_data.appgw -ne $appgw){
-            Write_OH("å¤‰æ•°AppGWã‚’ $($this.input_data.appgw)ã€€ã‹ã‚‰ $appgw ã¸æ›´æ–°ã—ã¾ã™")
+            Write_OH("•Ï”AppGW‚ğ $($this.input_data.appgw)@‚©‚ç $appgw ‚ÖXV‚µ‚Ü‚·")
             $this.input_data.appgw = $appgw
         }else{
-            Write_OH("å¤‰æ•°AppGWã¯è¨­å®šæ¸ˆã¿ã§ã™")
+            Write_OH("•Ï”AppGW‚Íİ’èÏ‚İ‚Å‚·")
         }
     }
     set_lb([String]$lb,[String]$rg){
@@ -161,10 +160,10 @@ class azmod{
         if($this.input_data.lb.Length -eq 0){
             $this.set_resource($rg,$lb,$keyname,$type)
         }elseif($this.input_data.lb -ne $lb){
-            Write_OH("å¤‰æ•°lbã‚’ $($this.input_data.lb)ã€€ã‹ã‚‰ $lb ã¸æ›´æ–°ã—ã¾ã™")
+            Write_OH("•Ï”lb‚ğ $($this.input_data.lb)@‚©‚ç $lb ‚ÖXV‚µ‚Ü‚·")
             $this.input_data.lb = $lb
         }else{
-            Write_OH("å¤‰æ•°lbã¯è¨­å®šæ¸ˆã¿ã§ã™")
+            Write_OH("•Ï”lb‚Íİ’èÏ‚İ‚Å‚·")
         }
     }
     set_vms([String]$vms,[String]$rg){
@@ -177,7 +176,7 @@ class azmod{
         if($this.input_data.rg.Length -eq 0){
             $this.input_data.Add( "rg", $rg )
         }else{
-            Write_OH("ResourceGroupåã‚’$($this.input_data.rg)ã‹ã‚‰$($rg)ã¸æ›´æ–°ã—ã¾ã™")
+            Write_OH("ResourceGroup–¼‚ğ$($this.input_data.rg)‚©‚ç$($rg)‚ÖXV‚µ‚Ü‚·")
             $this.input_data.rg = $rg
         }
     }
@@ -186,7 +185,7 @@ class azmod{
         New-Item -Force -ItemType Directory $output
     }
 
-    # ãƒ­ã‚°ã‚¤ãƒ³ç”¨
+    # ƒƒOƒCƒ“—p
     azlogin($env){
         try{
             $login_tester = az account list | convertfrom-json
@@ -194,9 +193,9 @@ class azmod{
             $login_tester = ""
         }
         if($login_tester.Count -eq 0){
-            Write_OH("äºŒè¦ç´ èªè¨¼ãŒæœ‰åŠ¹ã®ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã§ã¯CUIã§ã®ãƒ­ã‚°ã‚¤ãƒ³ãŒã§ãã¾ã›ã‚“")
-            Write_OH("CUIãƒ­ã‚°ã‚¤ãƒ³ã‚’å¸Œæœ›ã™ã‚‹å ´åˆã¯è©²å½“RGã®æ¨©é™ã®ä»˜ä¸ã•ã‚ŒãŸServicePrincipalã‚’ã”åˆ©ç”¨ãã ã•ã„")
-            Write_OH("Webãƒ–ãƒ©ã‚¦ã‚¶ã‹ã‚‰æ‰‹å‹•ãƒ­ã‚°ã‚¤ãƒ³ã‚’å®Ÿæ–½ãã ã•ã„")
+            Write_OH("“ñ—v‘f”FØ‚ª—LŒø‚ÌƒAƒJƒEƒ“ƒg‚Å‚ÍCUI‚Å‚ÌƒƒOƒCƒ“‚ª‚Å‚«‚Ü‚¹‚ñ")
+            Write_OH("CUIƒƒOƒCƒ“‚ğŠó–]‚·‚éê‡‚ÍŠY“–RG‚ÌŒ ŒÀ‚Ì•t—^‚³‚ê‚½ServicePrincipal‚ğ‚²—˜—p‚­‚¾‚³‚¢")
+            Write_OH("Webƒuƒ‰ƒEƒU‚©‚çè“®ƒƒOƒCƒ“‚ğÀ{‚­‚¾‚³‚¢")
             az login
         }
         az account set --subscription $env
@@ -204,7 +203,7 @@ class azmod{
             az login
             az account set --subscription $env
             if($? -eq $False){
-                Write_OH("ã‚µãƒ–ã‚¹ã‚¯ãƒªãƒ—ã‚·ãƒ§ãƒ³ç’°å¢ƒã®æŒ‡å®šãŒèª¤ã£ã¦ã„ã¾ã™")
+                Write_OH("ƒTƒuƒXƒNƒŠƒvƒVƒ‡ƒ“ŠÂ‹«‚Ìw’è‚ªŒë‚Á‚Ä‚¢‚Ü‚·")
                 exit_common 1
             }
         }
@@ -213,40 +212,40 @@ class azmod{
         New-Item -Force -ItemType Directory "output"
     }
     azautologin($env){
-        # ãƒ­ã‚°ã‚¤ãƒ³IDã¨ãƒ‘ã‚¹ã®å‡¦ç†
+        # ƒƒOƒCƒ“ID‚ÆƒpƒX‚Ìˆ—
         if(Test-Path "./username"){
             $username = Get-Content "./username"
             $psw = (Get-Content "./psw"  | ConvertTo-SecureString)
             $Credential = New-Object System.Management.Automation.PSCredential $username,$psw
         }else{
-            Write-Host("Azureã®ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã‚’æš—å·åŒ–ã—ã¦ä¿å­˜ã—ã¾ã™ã€‚")
-            Write-Host("Azureã®ãƒ­ã‚°ã‚¤ãƒ³ID(@gintra.bc-glex.netä»˜ã)ã¨ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„")
+            Write-Host("Azure‚ÌƒƒOƒCƒ“î•ñ‚ğˆÃ†‰»‚µ‚Ä•Û‘¶‚µ‚Ü‚·B")
+            Write-Host("Azure‚ÌƒƒOƒCƒ“ID(@gintra.bc-glex.net•t‚«)‚ÆƒpƒXƒ[ƒh‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢")
             $Credential = Get-Credential
             $Credential.UserName > "./username"
             $Credential.Password | ConvertFrom-SecureString  | Set-Content "./psw"
-            Write-Host("Azureã®ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã‚’ä¿å­˜ã—ã¾ã—ãŸã€‚ã“ã®ã¾ã¾çµ‚äº†ã—ã¾ã™ã€‚")
+            Write-Host("Azure‚ÌƒƒOƒCƒ“î•ñ‚ğ•Û‘¶‚µ‚Ü‚µ‚½B‚±‚Ì‚Ü‚ÜI—¹‚µ‚Ü‚·B")
             Exit 0
         }
         az login -u $Credential.UserName -p $Credential.GetNetworkCredential().Password
         if($? -eq $False){
-            Write_OH("ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ã¾ã—ãŸ(äºŒè¦ç´ èªè¨¼ãŒæœ‰åŠ¹ã®ã‚¢ã‚«ã‚¦ãƒ³ãƒˆã§ã¯ãƒ­ã‚°ã‚¤ãƒ³ã«å¿…ãšå¤±æ•—ã—ã¾ã™)")
-            $flag = Read-host("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å¤‰æ›´ã—ã¾ã—ãŸã‹ï¼Ÿ(y/n)")
+            Write_OH("ƒƒOƒCƒ“‚É¸”s‚µ‚Ü‚µ‚½(“ñ—v‘f”FØ‚ª—LŒø‚ÌƒAƒJƒEƒ“ƒg‚Å‚ÍƒƒOƒCƒ“‚É•K‚¸¸”s‚µ‚Ü‚·)")
+            $flag = Read-host("ƒpƒXƒ[ƒh‚ğ•ÏX‚µ‚Ü‚µ‚½‚©H(y/n)")
             if($flag[0] -eq "y"){
-                $Credential = Get-Credential -u $Credential.UserName -m "ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å†è¨­å®š"
+                $Credential = Get-Credential -u $Credential.UserName -m "ƒpƒXƒ[ƒhÄİ’è"
                 $Credential.Password | ConvertFrom-SecureString  | Set-Content "./psw"
                 az login -u $Credential.UserName -p $Credential.GetNetworkCredential().Password 
                 if($? -eq $False){
-                    Write_OH("ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ã¾ã—ãŸ")
+                    Write_OH("ƒƒOƒCƒ“‚É¸”s‚µ‚Ü‚µ‚½")
                     exit_common 1
                 }
             }else{
-                Write_OH("æ‰‹å‹•ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ã¾ã—ãŸ")
+                Write_OH("è“®ƒƒOƒCƒ“‚É¸”s‚µ‚Ü‚µ‚½")
                 exit_common 1
             }
         }
         az account set --subscription $env | ConvertFrom-Json
         if($? -eq $False){
-            Write_OH("ã‚µãƒ–ã‚¹ã‚¯ãƒªãƒ—ã‚·ãƒ§ãƒ³ç’°å¢ƒã®æŒ‡å®šãŒèª¤ã£ã¦ã„ã¾ã™")
+            Write_OH("ƒTƒuƒXƒNƒŠƒvƒVƒ‡ƒ“ŠÂ‹«‚Ìw’è‚ªŒë‚Á‚Ä‚¢‚Ü‚·")
             exit_common 1
         }
         $this.input_data.Add( "env", $env )
@@ -254,25 +253,25 @@ class azmod{
         New-Item -Force -ItemType Directory "output"
     }
 
-    # service princiopalã§ã®ãƒ­ã‚°ã‚¤ãƒ³ç”¨
+    # service princiopal‚Å‚ÌƒƒOƒCƒ“—p
     azsplogin($env){
- # ãƒ­ã‚°ã‚¤ãƒ³IDã¨ãƒ‘ã‚¹ã®å‡¦ç†
+ # ƒƒOƒCƒ“ID‚ÆƒpƒX‚Ìˆ—
         if(Test-Path "./username"){
             $username = Get-Content "./username"
             $psw = (Get-Content "./psw"  | ConvertTo-SecureString)
             $Credential = New-Object System.Management.Automation.PSCredential $username,$psw
         }else{
-            Write-Host("Azureã®ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã‚’æš—å·åŒ–ã—ã¦ä¿å­˜ã—ã¾ã™ã€‚")
-            Write-Host("Azureã®ãƒ­ã‚°ã‚¤ãƒ³ID(@gintra.bc-glex.netä»˜ã)ã¨ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„")
+            Write-Host("Azure‚ÌƒƒOƒCƒ“î•ñ‚ğˆÃ†‰»‚µ‚Ä•Û‘¶‚µ‚Ü‚·B")
+            Write-Host("Azure‚ÌƒƒOƒCƒ“ID(@gintra.bc-glex.net•t‚«)‚ÆƒpƒXƒ[ƒh‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢")
             $Credential = Get-Credential
             $Credential.UserName > "./username"
             $Credential.Password | ConvertFrom-SecureString  | Set-Content "./psw"
-            Write-Host("Azureã®ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã‚’ä¿å­˜ã—ã¾ã—ãŸã€‚ã“ã®ã¾ã¾çµ‚äº†ã—ã¾ã™ã€‚åˆå›å®Ÿè¡Œæ™‚ã¯å†åº¦å®Ÿè¡Œã—ã¦ãã ã•ã„")
+            Write-Host("Azure‚ÌƒƒOƒCƒ“î•ñ‚ğ•Û‘¶‚µ‚Ü‚µ‚½B‚±‚Ì‚Ü‚ÜI—¹‚µ‚Ü‚·B‰‰ñÀs‚ÍÄ“xÀs‚µ‚Ä‚­‚¾‚³‚¢")
             Exit 0
         }
         az login --service-principal -u $Credential.UserName -p $Credential.GetNetworkCredential().Password --tenant $env| ConvertFrom-Json
         if($? -eq $False){
-            Write_OH("ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ã¾ã—ãŸ")
+            Write_OH("ƒƒOƒCƒ“‚É¸”s‚µ‚Ü‚µ‚½")
             exit_common 1
         }
         $this.input_data.Add( "env", $env )

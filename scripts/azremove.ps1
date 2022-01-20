@@ -1,35 +1,33 @@
-
-
-##### ä½œæˆä¸­
+##### ì¬’†
 
 
 
 
-# ç”¨é€”ï¼šAzureCliã‚’åˆ©ç”¨ã—ã¦ãƒªã‚½ãƒ¼ã‚¹å‰Šé™¤ã‚’è¡Œã„ã¾ã™ã€‚è¨­å®šå¤‰æ›´ã¯åˆ¥ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã§å®Ÿæ–½ãã ã•ã„
-# azcli_mod_psm1ã¨åŒæ¢±ã—ã¦ä½¿ç”¨ã—ã¾ã™
-# å®Ÿè¡Œç”¨ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã¯execute.ps1ãªã®ã§å®Ÿéš›ã®ä½¿ç”¨æ–¹æ³•ã¯ãã¡ã‚‰ã‚’ã”è¦§ãã ã•ã„
+# —p“rFAzureCli‚ğ—˜—p‚µ‚ÄƒŠƒ\[ƒXíœ‚ğs‚¢‚Ü‚·Bİ’è•ÏX‚Í•Êƒ‚ƒWƒ…[ƒ‹‚ÅÀ{‚­‚¾‚³‚¢
+# azcli_mod_psm1‚Æ“¯«‚µ‚Äg—p‚µ‚Ü‚·
+# Às—p‚ÌƒXƒNƒŠƒvƒg‚Íexecute.ps1‚È‚Ì‚ÅÀÛ‚Ìg—p•û–@‚Í‚»‚¿‚ç‚ğ‚²——‚­‚¾‚³‚¢
 
 
-# åŸºæœ¬ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
+# Šî–{ƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒ|[ƒg
 using module ./scripts/azcli_mod.psm1
 
 class azremove: azmod {
-    # RGã®å‰Šé™¤ç”¨ãƒ¡ã‚½ãƒƒãƒ‰
+    # RG‚Ìíœ—pƒƒ\ƒbƒh
     goodbye_rg([int]$force){
 
     }
-    # ãƒªã‚½ãƒ¼ã‚¹å‰Šé™¤ç”¨ãƒ¡ã‚½ãƒƒãƒ‰
+    # ƒŠƒ\[ƒXíœ—pƒƒ\ƒbƒh
     goodbye_resources([Array]$resources,[int]$force){
         if($this.input_data.rg.Length -eq 0)){
-            Write_OH("ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚’è¨­å®šã—ã¦ãã ã•ã„")
+            Write_OH("ƒpƒ‰ƒ[ƒ^[‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢")
             exit_common 1
         }
         $all_resource_list = (az resource list | Convertfrom-Json)
-        # å‰Šé™¤å¯¾è±¡ãƒªã‚½ãƒ¼ã‚¹ã‚’å‚ç…§
+        # íœ‘ÎÛƒŠƒ\[ƒX‚ğQÆ
         foreach($resource in $resources){
             $target_id = ($all_resource_list|Where-Object{$_.name -eq $resource}).id
             Write_OH("[$($resource) ID]: $target_id")
-        # Jsonæ›¸ãå‡ºã—
+        # Json‘‚«o‚µ
             $json_file_name = "$($this.input_data.output)\$($resource)_$(get-Date -format "yyyymmdd").json"
             az resource show --ids $target_id > $json_file_name
             $resource_info = (az resource show --ids $target_id|Convertfrom-json)
@@ -38,30 +36,30 @@ class azremove: azmod {
                     $nic_ids =  $resouce_info.properties.networkProfile.networkInterfaces.id
                     $disk_ids = $resouce_info.properties.storageProfile.osDisk.managedDisk.id
                     $ddisk_ids = $resouce_info.properties.storageProfile.dataDisks.managedDisk.id
-                    Write_OH("[é–¢é€£NIC]")
+                    Write_OH("[ŠÖ˜ANIC]")
                     foreach($nic_id in $nic_ids){Write_OH($nic_id)}
-                    Write_OH("[é–¢é€£OsDisk]")
+                    Write_OH("[ŠÖ˜AOsDisk]")
                     foreach($disk_id in $disk_ids){Write_OH($disk_id)}
-                    Write_OH("[é–¢é€£DataDisk]")
+                    Write_OH("[ŠÖ˜ADataDisk]")
                     foreach($ddisk_id in $ddisk_ids){Write_OH($ddisk_id)}
                 }
                 default{}
             }
         }
-        # æœ€çµ‚ç¢ºèª
+        # ÅIŠm”F
         if($force -gt 0){
-            $flag = Read-Hsot("æœ¬å½“ã«å‰Šé™¤ã—ã¾ã™ã‹ï¼Ÿ(y/n):")
+            $flag = Read-Hsot("–{“–‚Éíœ‚µ‚Ü‚·‚©H(y/n):")
         }
         if($flag -eq "y"){
             foreach($resource in $resources){
                 $target_id = ($all_resource_list|Where-Object{$_.name -eq $resource}).id
                 $resouce_info = az resource show --ids $target_id | Convertfrom-json
                 switch($resouce_info.type){
-                    # å¯ç”¨æ€§ã‚»ãƒƒãƒˆã®å ´åˆ
+                    # ‰Â—p«ƒZƒbƒg‚Ìê‡
                     Microsoft.Compute/availabilitySets{
                         if($resouce_info.properties.virtualMachines.id.Count -gt 0){
-                            $Write_OH("å¯ç”¨æ€§ã‚»ãƒƒãƒˆå†…ã«VMãŒå­˜åœ¨ã™ã‚‹ãŸã‚å‡¦ç†ã‚’ä¸­æ–­ã—ã¾ã™")
-                            $Write_OH("[å¯¾è±¡å¯ç”¨æ€§ã‚»ãƒƒãƒˆå]: $resource")
+                            $Write_OH("‰Â—p«ƒZƒbƒg“à‚ÉVM‚ª‘¶İ‚·‚é‚½‚ßˆ—‚ğ’†’f‚µ‚Ü‚·")
+                            $Write_OH("[‘ÎÛ‰Â—p«ƒZƒbƒg–¼]: $resource")
                             exit_common 1
                         }else{
                             az vm availability-set delete --ids $target_id --debug --verbose
@@ -77,7 +75,7 @@ class azremove: azmod {
                         $nic_ids =  $resouce_info.properties.networkProfile.networkInterfaces.id
                         $disk_ids = $resouce_info.properties.storageProfile.osDisk.managedDisk.id
                         $ddisk_ids = $resouce_info.properties.storageProfile.dataDisks.managedDisk.id
-                        # å‰²ã‚Šå½“ã¦è§£é™¤
+                        # Š„‚è“–‚Ä‰ğœ
                         az vm stop --ids $target_id --no-wait 
                         az vm deallocate --ids $target_id --no-wait
                         az vm delete --ids $target_id --yes --no-wait
@@ -144,7 +142,7 @@ class azremove: azmod {
                     #     Remove-AzureRmWebAppSlot -ResourceGroupName $ResourceGroupName -Name $Name.split("/")[0] -Slot $Name.split("/")[1] -Force
                     # }
                     default{
-                        $this.Write_OH("æœªå®šç¾©ã®ãƒªã‚½ãƒ¼ã‚¹ã®ãŸã‚å‰Šé™¤ã§ãã¾ã›ã‚“")
+                        $this.Write_OH("–¢’è‹`‚ÌƒŠƒ\[ƒX‚Ì‚½‚ßíœ‚Å‚«‚Ü‚¹‚ñ")
                     }
                     # Microsoft.Compute/galleries
                     # Microsoft.Compute/images
@@ -164,14 +162,14 @@ class azremove: azmod {
                 }
             }
         }else{
-            Write_OH("å‡¦ç†ã‚’ä¸­æ–­ã—ã¾ã—ãŸ")
+            Write_OH("ˆ—‚ğ’†’f‚µ‚Ü‚µ‚½")
             exit_common 1
         }
-        # å‰Šé™¤å®Œäº†å¾Œã®ãƒªã‚½ãƒ¼ã‚¹ã‚’è¡¨ç¤º
+        # íœŠ®—¹Œã‚ÌƒŠƒ\[ƒX‚ğ•\¦
         $all_resource_list_after = (az resource list | Convertfrom-Json)
-        Write_OH("[å‰Šé™¤ã•ã‚ŒãŸãƒªã‚½ãƒ¼ã‚¹ä¸€è¦§]")
+        Write_OH("[íœ‚³‚ê‚½ƒŠƒ\[ƒXˆê——]")
         Compare-Object $all_resource_list_after $all_resource_list_after|Foreach-Object{Write_OH("$($_.InputObject)  $($_.SideIndicator)")}
     }
 }
 
-# 2. yes no ã®é¸æŠ(forceæ©Ÿèƒ½ã‚ã‚Š)
+# 2. yes no ‚Ì‘I‘ğ(force‹@”\‚ ‚è)

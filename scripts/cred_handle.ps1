@@ -1,5 +1,5 @@
 
-####### ä½œæˆä¸­
+####### ì¬’†
 
 $alphabetstr = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!""#$%&\'()*+,-./:;<=>?@[\\]^`{|}~ "
 

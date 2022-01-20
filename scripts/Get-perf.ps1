@@ -1,5 +1,3 @@
-
-
 # Param(
 #     [parameter(mandatory=$true)][String]$ResourceGroupName,
 #     [parameter(mandatory=$true)][array]$Name,
@@ -24,19 +22,19 @@ using module ./scripts/azcli_mod.psm1
 class GetMetric : azmod{
     [Array]ExCSV($name,$start_date,$end_date,[int]$species ){
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.env.Length -eq 0)){
-            Write_OH("parameter ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“")
+            Write_OH("parameter ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ")
             exit_common 1
         }
         [Array]$return_array = @()
         if(($species -gt 2) -or ($species -lt 1)){
-            Write-Output("speciesã®æŒ‡å®šã®ä»•æ–¹ãŒèª¤ã£ã¦ã„ã¾ã™");
-            Write-Output("æ¬¡ã®æ•°å­—ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ 1:VM 2:AppGW");
+            Write-Output("species‚Ìw’è‚Ìd•û‚ªŒë‚Á‚Ä‚¢‚Ü‚·");
+            Write-Output("Ÿ‚Ì”š‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢ 1:VM 2:AppGW");
         }
-        # æ—¥ä»˜åŠ å·¥
+        # “ú•t‰ÁH
         $date_list = @()
         $tmp_start = [DateTime]::ParseExact($start_date,"yyyy/MM/dd hh:mm:ss", $null);
         if($tmp_start -lt (Get-Date).AddDays(-93)){
-            Write-Host("æŒ‡å®šã•ã‚ŒãŸé–‹å§‹æ—¥ãŒå¤ã™ãã¾ã™");
+            Write-Host("w’è‚³‚ê‚½ŠJn“ú‚ªŒÃ‚·‚¬‚Ü‚·");
             $tmp_start = (Get-Date).AddDays(-93)
         }
         $tmp_end = [DateTime]::ParseExact($end_date,"yyyy/MM/dd HH:mm:ss", $null);
@@ -53,7 +51,7 @@ class GetMetric : azmod{
             }
             $tmp_start = $tmp_pre
         }
-        # ãƒ‡ãƒ¼ã‚¿å–å¾—
+        # ƒf[ƒ^æ“¾
         $outputPath = "$($this.input_data.output)\$($name)cpu_percentage_$((Get-Date).ToString("yyyyMMddhhmmss")).csv"
         $return_array += $outputPath
         if($species -eq 1){
@@ -68,7 +66,7 @@ class GetMetric : azmod{
             Foreach($date_string in $date_list){
                 $s_date = $date_string.split("_")[0]
                 $e_date = $date_string.split("_")[1]
-                # VM ã®å ´åˆã®æƒ…å ±å–å¾— CPUä½¿ç”¨ç‡ã®ã¿
+                # VM ‚Ìê‡‚Ìî•ñæ“¾ CPUg—p—¦‚Ì‚İ
                 $tmp_metricDtata = az monitor metrics list --resource $id --metric "Percentage CPU" --start-time $s_date --end-time $e_date|ConvertFrom-Json
                 $line = $tmp_metricDtata.value.timeseries.data
                 for ( $index = 0; $index -lt $line.count; $index++){                
@@ -116,11 +114,11 @@ class GetMetric : azmod{
 
     [Array]get_vm_metric($start_date,$end_date){
         if($this.input_data.vms.Length -eq 0){
-            Write_OH("parameter ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“")
+            Write_OH("parameter ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ")
             exit_common 1
         }
         [Array]$return_array = @()
-        foreach($Name in $this.input_data.resources){
+        foreach($Name in $this.input_data.vms){
             [Array]$result_path = $this.ExCSV( $Name,$start_date,$end_date,1)
             $return_array += $result_path[0]
         }
@@ -151,9 +149,9 @@ class GetMetric : azmod{
     }
 
     get_activity_log($vmname){
-        Write_OH("ã‚¢ã‚¯ãƒ†ã‚£ãƒ“ãƒ†ã‚£ãƒ­ã‚°ã‚’å–å¾—ã—ã¾ã™")
+        Write_OH("ƒAƒNƒeƒBƒrƒeƒBƒƒO‚ğæ“¾‚µ‚Ü‚·")
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.env.Length -eq 0)){
-            Write_OH("parameter ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“")
+            Write_OH("parameter ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ")
             exit_common 1
         }
         $rlist = az resource list --resource-group $this.input_data.rg | Convertfrom-Json
@@ -165,7 +163,7 @@ class GetMetric : azmod{
             }
         }
         if($target_id.Length -eq 0){
-            Write_OH("å¯¾è±¡ãŒè¦‹ã¤ã‘ã‚‰ã‚Œã¾ã›ã‚“ã§ã—ãŸã€‚$($this.input_data.rg)/$($vmname)")
+            Write_OH("‘ÎÛ‚ªŒ©‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ‚Å‚µ‚½B$($this.input_data.rg)/$($vmname)")
             exit_common 1
         }
         $startlist = az monitor activity-log list --query "[?operationName.value=='Microsoft.Compute/virtualMachines/start/action']" --offset 90d --resource-id $target_id | ConvertFrom-Json
@@ -192,7 +190,7 @@ class GetMetric : azmod{
 
     get_size_list(){
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.env.Length -eq 0)){
-            Write_OH("ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“")
+            Write_OH("ƒpƒ‰ƒ[ƒ^[‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ")
             exit_common 1
         }
         $ldata = @()
@@ -211,6 +209,6 @@ class GetMetric : azmod{
             $num += 1
         }
         $ldata |Select-Object -Property index,vmName,SizeName,numberOfCores,memoryInMb | Export-csv $csv_name
-        Write_OH("å‡¦ç†ãŒå®Œäº†ã—ã¾ã—ãŸã€‚")
+        Write_OH("ˆ—‚ªŠ®—¹‚µ‚Ü‚µ‚½B")
     }
 }

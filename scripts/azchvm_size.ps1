@@ -1,21 +1,20 @@
+# —p“rFAzureCli‚ğ—˜—p‚µ‚ÄvmƒTƒCƒY•ÏX‚ğs‚¢‚Ü‚·
+# azcli_mod_psm1‚Æ“¯«‚µ‚Äg—p‚µ‚Ü‚·
+# Às—p‚ÌƒXƒNƒŠƒvƒg‚Íexecute.ps1‚È‚Ì‚ÅÀÛ‚Ìg—p•û–@‚Í‚»‚¿‚ç‚ğ‚²——‚­‚¾‚³‚¢
 
-# ç”¨é€”ï¼šAzureCliã‚’åˆ©ç”¨ã—ã¦vmã‚µã‚¤ã‚ºå¤‰æ›´ã‚’è¡Œã„ã¾ã™
-# azcli_mod_psm1ã¨åŒæ¢±ã—ã¦ä½¿ç”¨ã—ã¾ã™
-# å®Ÿè¡Œç”¨ã®ã‚¹ã‚¯ãƒªãƒ—ãƒˆã¯execute.ps1ãªã®ã§å®Ÿéš›ã®ä½¿ç”¨æ–¹æ³•ã¯ãã¡ã‚‰ã‚’ã”è¦§ãã ã•ã„
 
-
-# åŸºæœ¬ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
+# Šî–{ƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒ|[ƒg
 using module ./scripts/azcli_mod.psm1
 . ./scripts/azchappgw.ps1
 
 class chvmsize: azmod {
     chvmsize_aroundappgw([String]$size,[String]$appgw,[int]$flag){
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.vms.Length -eq 0)){
-            Write_OH("ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚’è¨­å®šã—ã¦ãã ã•ã„")
+            Write_OH("ƒpƒ‰ƒ[ƒ^[‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢")
             exit_common 1
         }
         if($this.input_data.appgw.Length -eq 0){
-            Write_OH("ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚’è¨­å®šã—ã¦ãã ã•ã„")
+            Write_OH("ƒpƒ‰ƒ[ƒ^[‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢")
             exit_common 1
         }
         $appgw_instance = New-Object chappgw
@@ -25,7 +24,7 @@ class chvmsize: azmod {
                 $vminfo = az vm show -g $this.input_data.rg -n $name | ConvertFrom-Json
                 $currentsize = $vminfo.hardwareProfile.vmSize
                 if($size -eq $currentsize){
-                    Write_OH("$name ã¯ã™ã§ã« $size ã§ã™ã€‚")
+                    Write_OH("$name ‚Í‚·‚Å‚É $size ‚Å‚·B")
                 }else{
                     $ipaddresses = @()
                     foreach($onedata in $vminfo.networkProfile.networkInterfaces.id){
@@ -61,19 +60,19 @@ class chvmsize: azmod {
                 }
             }
         }
-        Write_OH("å‡¦ç†ãŒå®Œäº†ã—ã¾ã—ãŸ")
+        Write_OH("ˆ—‚ªŠ®—¹‚µ‚Ü‚µ‚½")
     }
     exec_remote_vm($name,$command){
         if(($this.input_data.rg.Length -eq 0) -or ($this.input_data.vms.Length -eq 0)){
-            Write_OH("ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã‚’è¨­å®šã—ã¦ãã ã•ã„")
+            Write_OH("ƒpƒ‰ƒ[ƒ^[‚ğİ’è‚µ‚Ä‚­‚¾‚³‚¢")
             exit_common 1
         }
         az vm run-command invoke -g $this.input_data.rg -n $name --command-id RunShellScript --scripts "uname -n"
         if($? -eq $False){
-            Write_OH("ä¸‹è¨˜ã‚³ãƒãƒ³ãƒ‰ã®å‡¦ç†ã«å¤±æ•—ã—ã¾ã—ãŸ")
+            Write_OH("‰º‹LƒRƒ}ƒ“ƒh‚Ìˆ—‚É¸”s‚µ‚Ü‚µ‚½")
             Write_OH($command)
             exit_common 1
         }
-        Write_OH("å‡¦ç†ãŒå®Œäº†ã—ã¾ã—ãŸ")
+        Write_OH("ˆ—‚ªŠ®—¹‚µ‚Ü‚µ‚½")
     }
 }
